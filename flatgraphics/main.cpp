@@ -14,8 +14,10 @@
 #include "shader.hpp"
 #include "flat.h"
 
+#include "sandbag.h"
+
 const int WIDTH = 640;
-const int HEIGHT = 480;
+const int HEIGHT = 640; // 480
 
 using std::cout;
 using std::endl;
@@ -26,7 +28,24 @@ using std::string;
 const std::string BASE_PATH = "/users/claytonknittel/documents/xcode/flatgraphics/flatgraphics/";
 
 
+const util::color cols[4] = {
+	util::black,
+	util::red,
+	util::green,
+	util::cyan
+};
+
+#define WID 401
+
+sandbag sa(WID, WID);
+
+util::color get(int i, int j) {
+	return cols[sa.g[i + j * sa.w]];
+}
+
 int main(int argc, const char * argv[]) {
+	sa.fill(WID / 2, WID / 2, 320000);
+	
 	gl::glfw_window w(WIDTH, HEIGHT, 3, 3);
 	w.setBGColor(util::bar_color);
 	
@@ -34,20 +53,7 @@ int main(int argc, const char * argv[]) {
 	
 	gl::context c = w.getContext();
 	
-	using shape::triangle;
-	
-//	vector<shape::geom*> ge;
-//	float l = .05f;
-//	float st = 1.f;
-//	for (float x = -st; x < st; x += l)
-//		for (float y = -st; y < st; y += l) {
-//			ge.push_back(new triangle(x, y, x + l, y, x + l, y + l, util::cyan));
-//			ge.push_back(new triangle(x, y, x, y + l, x + l, y + l, util::green));
-//		}
-//	conglomerate *gg = new conglomerate(ge);
-//	renderable *r = c.genRenderObj(gg);
-//	ge.clear();
-	renderable *r = c.genStaticRenderObj(new grid(0, 0, 1.8f, 1.8f, 128, 128, [](int i, int j) { return (((i + j) & 1) == 0) ? util::green : util::cyan; }));
+	renderable *r = c.genStaticRenderObj(new grid(0, 0, 2.f, 2.f, WID, WID, [](int i, int j) { return get(i, j); }));
 	
 	double last = glfwGetTime();
 	int frames = 0;

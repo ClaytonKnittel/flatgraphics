@@ -76,7 +76,6 @@ namespace gl {
     }
 
     glfw_window::~glfw_window() {
-        cout << "Terminate" << endl;
         glfwTerminate();
     }
 

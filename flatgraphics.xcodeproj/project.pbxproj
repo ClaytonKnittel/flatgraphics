@@ -17,6 +17,7 @@
 		CECACC12217C630E00806AEC /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC10217C630E00806AEC /* shader.cpp */; };
 		CECACC19217D82B300806AEC /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC18217D82B300806AEC /* util.cpp */; };
 		CECACC1B217F94C300806AEC /* shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC1A217F94C300806AEC /* shape.cpp */; };
+		CEF63CCC218060D50052B097 /* sandbag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF63CCB218060D50052B097 /* sandbag.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -49,6 +50,8 @@
 		CECACC17217D7DBD00806AEC /* test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
 		CECACC18217D82B300806AEC /* util.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
 		CECACC1A217F94C300806AEC /* shape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shape.cpp; sourceTree = "<group>"; usesTabs = 1; };
+		CEF63CCA2180603E0052B097 /* sandbag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sandbag.h; sourceTree = "<group>"; };
+		CEF63CCB218060D50052B097 /* sandbag.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sandbag.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +100,8 @@
 				CE4179B8217C3E6900D386D6 /* gl.hpp */,
 				CECACC10217C630E00806AEC /* shader.cpp */,
 				CECACC11217C630E00806AEC /* shader.hpp */,
+				CEF63CCA2180603E0052B097 /* sandbag.h */,
+				CEF63CCB218060D50052B097 /* sandbag.cpp */,
 			);
 			path = flatgraphics;
 			sourceTree = "<group>";
@@ -188,6 +193,7 @@
 				CE4179A7217BF32100D386D6 /* main.cpp in Sources */,
 				CECACC1B217F94C300806AEC /* shape.cpp in Sources */,
 				CE4179B9217C3E6900D386D6 /* gl.cpp in Sources */,
+				CEF63CCC218060D50052B097 /* sandbag.cpp in Sources */,
 				CECACC12217C630E00806AEC /* shader.cpp in Sources */,
 				CECACC19217D82B300806AEC /* util.cpp in Sources */,
 				CECACC0F217C603300806AEC /* geom.cpp in Sources */,

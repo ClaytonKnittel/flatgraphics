@@ -29,6 +29,15 @@ namespace shape {
 		y -= p.y;
 	}
 	
+	void fill(float *f, float x, float y, color c) {
+		f[0] = x;
+		f[1] = y;
+		f[2] = c.rf();
+		f[3] = c.gf();
+		f[4] = c.bf();
+		f[5] = c.af();
+	}
+	
 	
 	geom::geom(GLuint renderMode, unsigned int size): renderMode(renderMode), size(size), offset(0) {}
 	
@@ -59,6 +68,11 @@ namespace shape {
 		this->visible = visible;
 		change_flag = false;
 		
+		// initialize to 0 by default, as these
+		// are optional
+		this->ebo = 0;
+		this->numElements = 0;
+		
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
 		
@@ -74,6 +88,8 @@ namespace shape {
 	}
 
 	renderable::~renderable() {
+		if (ebo != 0)
+			glDeleteBuffers(1, &ebo);
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
 		delete shape;
@@ -96,22 +112,35 @@ namespace shape {
 		
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glDrawArrays(render_mode, shape->offset, size);
+		if (numElements != 0) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+			glDrawElements(render_mode, numElements, GL_UNSIGNED_INT, NULL);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		}
+		else
+			glDrawArrays(render_mode, shape->offset, numVertices);
 		
 		deref_buffers();
 	}
 
 	// protected members
 	void renderable::loadData(unsigned int size, float *data) {
-		this->size = size;
+		this->numVertices = size;
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, PTS_PER_VERTEX * size * sizeof(float), data, draw_opt);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+	
+	void renderable::loadElementBuffer(unsigned int size, int *data) {
+		this->numElements = size;
+		glGenBuffers(1, &ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(int), data, GL_STATIC_DRAW);
+	}
 
 	void renderable::loadSubData(float *data) {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, PTS_PER_VERTEX * size * sizeof(float), data);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, PTS_PER_VERTEX * numVertices * sizeof(float), data);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
@@ -148,24 +177,9 @@ namespace shape {
 	}
 
 	void triangle::genData(float *f) {
-		f[0] = pts[0].x;
-		f[1] = pts[0].y;
-		f[2] = c.rf();
-		f[3] = c.gf();
-		f[4] = c.bf();
-		f[5] = c.af();
-		f[6] = pts[1].x;
-		f[7] = pts[1].y;
-		f[8] = c.rf();
-		f[9] = c.gf();
-		f[10] = c.bf();
-		f[11] = c.af();
-		f[12] = pts[2].x;
-		f[13] = pts[2].y;
-		f[14] = c.rf();
-		f[15] = c.gf();
-		f[16] = c.bf();
-		f[17] = c.af();
+		fill(f, pts[0].x, pts[0].y, c);
+		fill(f + 6, pts[1].x, pts[1].y, c);
+		fill(f + 12, pts[2].x, pts[2].y, c);
 	}
 	
 	std::ostream &operator<<(std::ostream &o, triangle &t) {
@@ -210,9 +224,38 @@ namespace shape {
 	
 	
 	
-//	grid::grid(int rows, int cols, float width, float height, void *vals, map<void*, color> colorFunction): geom(GL_TRIANGLES, 3) {
-//
-//	}
+	grid::grid(float x, float y, float width, float height, int rows, int cols, colorFunc colorFunction): geom(GL_TRIANGLES, 6 * rows * cols) {
+		this->x = x;
+		this->y = y;
+		this->width = width;
+		this->height = height;
+		this->rows = rows;
+		this->cols = cols;
+		this->colorFunction = colorFunction;
+	}
+	
+	grid::~grid() {}
+	
+	void grid::genData(float *f) {
+		float dx = width / rows;
+		float dy = height / cols;
+		float xs = x - width / 2;
+		float ys = y - height / 2;
+		for (int j = 0; j < cols; j++) {
+			float yp = ys + j * dy;
+			for (int i = 0; i < rows; i++) {
+				float xp = xs + i * dx;
+				int ind = 36 * (i + rows * j);
+				color c = colorFunction(i, j);
+				fill(f + ind, xp, yp, c);
+				fill(f + ind + 6, xp, yp + dy, c);
+				fill(f + ind + 12, xp + dx, yp, c);
+				fill(f + ind + 18, xp + dx, yp, c);
+				fill(f + ind + 24, xp, yp + dy, c);
+				fill(f + ind + 30, xp + dx, yp + dy, c);
+			}
+		}
+	}
 	
 }
 

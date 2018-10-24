@@ -36,17 +36,18 @@ int main(int argc, const char * argv[]) {
 	
 	using shape::triangle;
 	
-	vector<shape::geom*> ge;
-	float l = .05f;
-	float st = 1.f;
-	for (float x = -st; x < st; x += l)
-		for (float y = -st; y < st; y += l) {
-			ge.push_back(new triangle(x, y, x + l, y, x + l, y + l, util::cyan));
-			ge.push_back(new triangle(x, y, x, y + l, x + l, y + l, util::green));
-		}
-	conglomerate *gg = new conglomerate(ge);
-	renderable *r = c.genRenderObj(gg);
-	ge.clear();
+//	vector<shape::geom*> ge;
+//	float l = .05f;
+//	float st = 1.f;
+//	for (float x = -st; x < st; x += l)
+//		for (float y = -st; y < st; y += l) {
+//			ge.push_back(new triangle(x, y, x + l, y, x + l, y + l, util::cyan));
+//			ge.push_back(new triangle(x, y, x, y + l, x + l, y + l, util::green));
+//		}
+//	conglomerate *gg = new conglomerate(ge);
+//	renderable *r = c.genRenderObj(gg);
+//	ge.clear();
+	renderable *r = c.genStaticRenderObj(new grid(0, 0, 1.8f, 1.8f, 128, 128, [](int i, int j) { return (((i + j) & 1) == 0) ? util::green : util::cyan; }));
 	
 	double last = glfwGetTime();
 	int frames = 0;

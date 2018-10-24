@@ -24,6 +24,8 @@ using std::map;
 
 using namespace util;
 
+typedef color(*colorFunc)(int, int);
+
 namespace gl {
 	class context;
 	class glfw_window;
@@ -69,6 +71,10 @@ namespace shape {
         bool visible, dynamic;
         // call only once at initialization
         void loadData(unsigned int size, float *data);
+		
+		// call once at initialization to enable
+		// element-indexed drawing
+		void loadElementBuffer(unsigned int size, int *data);
         
         // call for dynamic objects each frame
         void loadSubData(float *data);
@@ -79,7 +85,11 @@ namespace shape {
 		renderable(geom *shape, bool dynamic=false, bool visible=true);
 		
         geom *shape;
-        GLuint vao, vbo;
+		
+		// vertex array object
+		// vertex buffer object
+		// element buffer object (optional)
+        GLuint vao, vbo, ebo;
 		
 		// flagged if any changes are made to the geoms
         mutable bool change_flag;
@@ -89,7 +99,9 @@ namespace shape {
         const GLuint draw_opt, render_mode;
         
         // number of points in this shape
-        unsigned int size;
+        unsigned int numVertices;
+		// number of elements in element buffer (optional)
+		unsigned int numElements;
     };
     
     class triangle: public geom {
@@ -126,12 +138,16 @@ namespace shape {
 	
 	class grid: public geom {
 	public:
-//		grid(int rows, int cols, float width, float height, void *vals, map<void*, color> colorFunction);
+		grid(float x, float y, float width, float height, int rows, int cols, colorFunc colorFunction);
+		virtual ~grid();
+		
+		virtual void genData(float *f);
 	private:
+		// talking about center of grid
+		float x, y;
 		float width, height;
 		int rows, cols;
-		map<void*, color> colorFunction;
-		conglomerate c;
+		colorFunc colorFunction;
 	};
     
 }

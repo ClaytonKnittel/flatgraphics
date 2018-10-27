@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include "gl.hpp"
+#include <sstream>
 
 #define PTS_PER_VERTEX 6
 
@@ -107,7 +108,6 @@ namespace shape {
 			glDeleteBuffers(1, &ebo);
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
-		delete shape;
 	}
 
 	void renderable::setVisible(bool v) {
@@ -187,6 +187,14 @@ namespace shape {
 		pts[0] -= p;
 		pts[1] -= p;
 		pts[2] -= p;
+	}
+	pt &triangle::operator[](const int i) {
+		if (i < 0 || i > 2) {
+			std::stringstream s;
+			s << "Cannot acces element " << i << " of triangle";
+			throw std::out_of_range(s.str());
+		}
+		return pts[i];
 	}
 
 	void triangle::genData(float *f) {

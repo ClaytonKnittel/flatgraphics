@@ -23,23 +23,26 @@ using std::endl;
 using std::vector;
 using std::string;
 
-const std::string BASE_PATH = "/users/claytonknittel/documents/xcode/flatgraphics/flatgraphics/";
-
 
 int main(int argc, const char * argv[]) {
 	
 	gl::glfw_window w(WIDTH, HEIGHT, 3, 3);
 	w.setBGColor(util::bar_color);
 	
-	shader s(BASE_PATH + "resources/shaders/core.vs", BASE_PATH + "resources/shaders/core.frag");
+	shader s;
 	
 	gl::context c = w.getContext();
+	
+	shape::triangle t({0, 0}, {.5f, 0}, {.6f, .4f}, util::cyan);
+	auto *d = c.genStaticRenderObj(&t);
 	
 	double last = w.getTime();
 	int frames = 0;
 	while (!w.shouldClose()) {
 		w.begin_draw();
 		s.use();
+		
+		d->draw();
 		
 		frames++;
 		if (w.getTime() - last >= 1.0) {
@@ -50,6 +53,7 @@ int main(int argc, const char * argv[]) {
 		
 		w.end_draw();
 	}
+	delete d;
 	
 	return 0;
 }

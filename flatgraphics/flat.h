@@ -12,6 +12,7 @@
 #define flat_h
 
 #include <iostream>
+#include <GLFW/glfw3.h>
 
 using std::cout;
 using std::endl;
@@ -73,5 +74,17 @@ std::ostream &operator<<(std::ostream &o, geom::rect r);
 std::ostream &operator<<(std::ostream &o, geom::circle c);
 
 std::ostream &operator<<(std::ostream &o, geom::triangle t);
+
+
+
+namespace input {
+	
+	class MouseListener {
+		virtual void leftPress() = 0;
+		virtual void rightPress() = 0;
+		virtual void middlePress() = 0;
+	};
+	
+}
 
 #endif /* flat_h */

@@ -14,10 +14,13 @@
 #include <iostream>
 
 using std::ifstream;
-using std::string;
 using std::stringstream;
 using std::cout;
 using std::endl;
+
+const string shader::BASE_PATH = "/users/claytonknittel/documents/xcode/flatgraphics/flatgraphics/";
+const string shader::DEFAULT_VS = BASE_PATH + "resources/shaders/core.vs";
+const string shader::DEFAULT_FS = BASE_PATH + "resources/shaders/core.frag";
 
 shader::shader(const std::string vertexPath, const std::string fragmentPath): shader(vertexPath.c_str(), fragmentPath.c_str()) {}
 

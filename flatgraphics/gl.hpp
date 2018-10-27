@@ -16,6 +16,10 @@
 #include <GLFW/glfw3.h>
 
 #include "flat.h"
+
+// just so you don't have to include in other files
+#include "shader.hpp"
+
 #include <iostream>
 #include <vector>
 
@@ -40,23 +44,23 @@ namespace shape {
         void operator+=(pt p);
         void operator-=(pt p);
     };
-    
-    struct geom {
-        // offset in the vertex buffer at which
-        // this geom stores its data
+	
+	struct geom {
+		// offset in the vertex buffer at which
+		// this geom stores its data
 		unsigned int offset;
 		
 		// how many vertices there are
 		const unsigned int size;
 		
 		// GL_TRIANGLES, GL_LINES, etc.
-        const GLuint renderMode;
+		const GLuint renderMode;
 		virtual void genData(float *ar) = 0;
 		float* genData();
-        
-        geom(GLuint renderMode, unsigned int size);
+		
+		geom(GLuint renderMode, unsigned int size);
 		virtual ~geom();
-    };
+	};
     
     class renderable {
     public:
@@ -113,6 +117,7 @@ namespace shape {
         
         void operator+=(pt p);
         void operator-=(pt p);
+		pt &operator[](const int i);
         
         virtual void genData(float *f);
         
@@ -160,6 +165,7 @@ namespace gl {
 	class context {
 	public:
 		void drawTri(float x1, float y1, float x2, float y2, float x3, float y3, color c);
+		void drawTri(shape::triangle *t);
 		
 		renderable* genTri(float x1, float y1, float x2, float y2, float x3, float y3, color c);
 		renderable* genRenderObj(shape::geom *g);
@@ -178,7 +184,7 @@ namespace gl {
 		void addKeyPress(int glfwKey, const std::function<void()> &action);
 		int window_width();
 		int window_height();
-		GLFWwindow * ref();
+		GLFWwindow * glfwWindow();
 		void setBGColor(util::color c);
 		int setBGColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		
@@ -189,6 +195,11 @@ namespace gl {
 		void end_draw();
 		
 		double getTime();
+		
+		void createCursorPosCallback(void(GLFWwindow*, double, double));
+		
+		bool createCustomCursor(unsigned char* data, int w=16, int h=16);
+		void defaultCursor();
 		
 	private:
 		GLFWwindow *_window;

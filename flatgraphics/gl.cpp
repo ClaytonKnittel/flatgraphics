@@ -21,6 +21,11 @@ namespace gl {
         renderable r = renderable(t);
         r.draw();
     }
+	
+	void context::drawTri(shape::triangle *t) {
+		renderable r = renderable(t);
+		r.draw();
+	}
 
     renderable* context::genTri(float x1, float y1, float x2, float y2, float x3, float y3, util::color c) {
         triangle *t = new triangle(x1, y1, x2, y2, x3, y3, c);
@@ -73,7 +78,7 @@ namespace gl {
         // enable alpha support
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
+	}
 
     glfw_window::~glfw_window() {
         glfwTerminate();
@@ -90,7 +95,7 @@ namespace gl {
         return height;
     }
 
-    GLFWwindow * glfw_window::ref() {
+	GLFWwindow * glfw_window::glfwWindow() {
         return _window;
     }
 
@@ -128,5 +133,28 @@ namespace gl {
     double glfw_window::getTime() {
         return glfwGetTime();
     }
+	
+	void glfw_window::createCursorPosCallback(void(f)(GLFWwindow*, double, double)) {
+		glfwSetCursorPosCallback(_window, f);
+	}
+	
+	bool glfw_window::createCustomCursor(unsigned char* data, int w, int h) {
+		GLFWimage image;
+		image.width = w;
+		image.height = h;
+		image.pixels = data;
+		
+		GLFWcursor* cursor = glfwCreateCursor(&image, 0, 0);
+		if (cursor == NULL) {
+			cout << "Could not create custom cursor" << endl;
+			return false;
+		}
+		glfwSetCursor(_window, cursor);
+		glfwSetCursor(_window, NULL);
+		return true;
+	}
+	
+	void glfw_window::defaultCursor() {
+		glfwSetCursor(_window, NULL);
+	}
 }
-

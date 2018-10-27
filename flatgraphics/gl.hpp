@@ -66,6 +66,9 @@ namespace shape {
         void draw();
 		
 		friend class gl::context;
+		
+		// called if changes were made to vertex data
+		void change() const;
         
     protected:
         bool visible, dynamic;
@@ -78,9 +81,6 @@ namespace shape {
         
         // call for dynamic objects each frame
         void loadSubData(float *data);
-        
-        // called by child if changes were made to vertex data
-        void change() const;
     private:
 		renderable(geom *shape, bool dynamic=false, bool visible=true);
 		
@@ -187,6 +187,8 @@ namespace gl {
 		bool shouldClose();
 		void begin_draw();
 		void end_draw();
+		
+		double getTime();
 		
 	private:
 		GLFWwindow *_window;

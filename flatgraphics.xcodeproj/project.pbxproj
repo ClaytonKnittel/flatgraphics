@@ -13,11 +13,22 @@
 		CE4179B3217BF36700D386D6 /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4179B2217BF36700D386D6 /* libglfw.3.2.dylib */; };
 		CE4179B5217BF37000D386D6 /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4179B4217BF37000D386D6 /* libGLEW.2.1.0.dylib */; };
 		CE4179B9217C3E6900D386D6 /* gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4179B7217C3E6900D386D6 /* gl.cpp */; };
+		CE48CECE2183F8C400ECFD17 /* geom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC0E217C603300806AEC /* geom.cpp */; };
+		CE48CECF2183F8C400ECFD17 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC18217D82B300806AEC /* util.cpp */; };
+		CE48CED02183F8C400ECFD17 /* shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC1A217F94C300806AEC /* shape.cpp */; };
+		CE48CED12183F8C400ECFD17 /* gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4179B7217C3E6900D386D6 /* gl.cpp */; };
+		CE48CED22183F8C400ECFD17 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC10217C630E00806AEC /* shader.cpp */; };
+		CE48CED32183F8D000ECFD17 /* flat.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4179B6217BF3A500D386D6 /* flat.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE48CED42183F8D000ECFD17 /* gl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = CE4179B8217C3E6900D386D6 /* gl.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE48CED52183F8D800ECFD17 /* shader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = CECACC11217C630E00806AEC /* shader.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE48CED62183F95C00ECFD17 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4179AE217BF35900D386D6 /* OpenGL.framework */; };
+		CE48CED72183F96200ECFD17 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4179B0217BF35E00D386D6 /* GLUT.framework */; };
+		CE48CED82183F98100ECFD17 /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4179B2217BF36700D386D6 /* libglfw.3.2.dylib */; };
+		CE48CED92183F98100ECFD17 /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4179B4217BF37000D386D6 /* libGLEW.2.1.0.dylib */; };
 		CECACC0F217C603300806AEC /* geom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC0E217C603300806AEC /* geom.cpp */; };
 		CECACC12217C630E00806AEC /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC10217C630E00806AEC /* shader.cpp */; };
 		CECACC19217D82B300806AEC /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC18217D82B300806AEC /* util.cpp */; };
 		CECACC1B217F94C300806AEC /* shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECACC1A217F94C300806AEC /* shape.cpp */; };
-		CEF63CCC218060D50052B097 /* sandbag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF63CCB218060D50052B097 /* sandbag.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +53,7 @@
 		CE4179B6217BF3A500D386D6 /* flat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = flat.h; sourceTree = "<group>"; usesTabs = 1; };
 		CE4179B7217C3E6900D386D6 /* gl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gl.cpp; sourceTree = "<group>"; };
 		CE4179B8217C3E6900D386D6 /* gl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gl.hpp; sourceTree = "<group>"; usesTabs = 1; };
+		CE48CEC92183F3BB00ECFD17 /* libflat.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libflat.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CECACC0E217C603300806AEC /* geom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = geom.cpp; sourceTree = "<group>"; };
 		CECACC10217C630E00806AEC /* shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
 		CECACC11217C630E00806AEC /* shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = shader.hpp; sourceTree = "<group>"; };
@@ -50,8 +62,6 @@
 		CECACC17217D7DBD00806AEC /* test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
 		CECACC18217D82B300806AEC /* util.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
 		CECACC1A217F94C300806AEC /* shape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shape.cpp; sourceTree = "<group>"; usesTabs = 1; };
-		CEF63CCA2180603E0052B097 /* sandbag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sandbag.h; sourceTree = "<group>"; };
-		CEF63CCB218060D50052B097 /* sandbag.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sandbag.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +73,17 @@
 				CE4179B3217BF36700D386D6 /* libglfw.3.2.dylib in Frameworks */,
 				CE4179B1217BF35E00D386D6 /* GLUT.framework in Frameworks */,
 				CE4179AF217BF35900D386D6 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE48CEC62183F3BB00ECFD17 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE48CED72183F96200ECFD17 /* GLUT.framework in Frameworks */,
+				CE48CED62183F95C00ECFD17 /* OpenGL.framework in Frameworks */,
+				CE48CED82183F98100ECFD17 /* libglfw.3.2.dylib in Frameworks */,
+				CE48CED92183F98100ECFD17 /* libGLEW.2.1.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				CE4179A3217BF32100D386D6 /* flatgraphics */,
+				CE48CEC92183F3BB00ECFD17 /* libflat.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,8 +122,6 @@
 				CE4179B8217C3E6900D386D6 /* gl.hpp */,
 				CECACC10217C630E00806AEC /* shader.cpp */,
 				CECACC11217C630E00806AEC /* shader.hpp */,
-				CEF63CCA2180603E0052B097 /* sandbag.h */,
-				CEF63CCB218060D50052B097 /* sandbag.cpp */,
 			);
 			path = flatgraphics;
 			sourceTree = "<group>";
@@ -136,6 +156,19 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		CE48CEC72183F3BB00ECFD17 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE48CED32183F8D000ECFD17 /* flat.h in Headers */,
+				CE48CED42183F8D000ECFD17 /* gl.hpp in Headers */,
+				CE48CED52183F8D800ECFD17 /* shader.hpp in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		CE4179A2217BF32100D386D6 /* flatgraphics */ = {
 			isa = PBXNativeTarget;
@@ -154,6 +187,23 @@
 			productReference = CE4179A3217BF32100D386D6 /* flatgraphics */;
 			productType = "com.apple.product-type.tool";
 		};
+		CE48CEC82183F3BB00ECFD17 /* flat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE48CECC2183F3BB00ECFD17 /* Build configuration list for PBXNativeTarget "flat" */;
+			buildPhases = (
+				CE48CEC52183F3BB00ECFD17 /* Sources */,
+				CE48CEC62183F3BB00ECFD17 /* Frameworks */,
+				CE48CEC72183F3BB00ECFD17 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = flat;
+			productName = flat;
+			productReference = CE48CEC92183F3BB00ECFD17 /* libflat.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -164,6 +214,9 @@
 				ORGANIZATIONNAME = "Clayton Knittel";
 				TargetAttributes = {
 					CE4179A2217BF32100D386D6 = {
+						CreatedOnToolsVersion = 9.4.1;
+					};
+					CE48CEC82183F3BB00ECFD17 = {
 						CreatedOnToolsVersion = 9.4.1;
 					};
 				};
@@ -181,6 +234,7 @@
 			projectRoot = "";
 			targets = (
 				CE4179A2217BF32100D386D6 /* flatgraphics */,
+				CE48CEC82183F3BB00ECFD17 /* flat */,
 			);
 		};
 /* End PBXProject section */
@@ -193,10 +247,21 @@
 				CE4179A7217BF32100D386D6 /* main.cpp in Sources */,
 				CECACC1B217F94C300806AEC /* shape.cpp in Sources */,
 				CE4179B9217C3E6900D386D6 /* gl.cpp in Sources */,
-				CEF63CCC218060D50052B097 /* sandbag.cpp in Sources */,
 				CECACC12217C630E00806AEC /* shader.cpp in Sources */,
 				CECACC19217D82B300806AEC /* util.cpp in Sources */,
 				CECACC0F217C603300806AEC /* geom.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE48CEC52183F3BB00ECFD17 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE48CECE2183F8C400ECFD17 /* geom.cpp in Sources */,
+				CE48CECF2183F8C400ECFD17 /* util.cpp in Sources */,
+				CE48CED02183F8C400ECFD17 /* shape.cpp in Sources */,
+				CE48CED12183F8C400ECFD17 /* gl.cpp in Sources */,
+				CE48CED22183F8C400ECFD17 /* shader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +403,46 @@
 			};
 			name = Release;
 		};
+		CE48CECA2183F3BB00ECFD17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(INSTALL_PATH)";
+				DSTROOT = "/tmp/$(PROJECT_NAME).dst /";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				INSTALL_PATH = /users/claytonknittel/documents/xcode/flatgraphics;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		CE48CECB2183F3BB00ECFD17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(INSTALL_PATH)";
+				DSTROOT = "/tmp/$(PROJECT_NAME).dst /";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				INSTALL_PATH = /users/claytonknittel/documents/xcode/flatgraphics;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -355,6 +460,15 @@
 			buildConfigurations = (
 				CE4179AB217BF32100D386D6 /* Debug */,
 				CE4179AC217BF32100D386D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE48CECC2183F3BB00ECFD17 /* Build configuration list for PBXNativeTarget "flat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE48CECA2183F3BB00ECFD17 /* Debug */,
+				CE48CECB2183F3BB00ECFD17 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

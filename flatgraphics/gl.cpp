@@ -124,5 +124,9 @@ namespace gl {
     void glfw_window::end_draw() {
         glfwSwapBuffers(this->_window);
     }
+    
+    double glfw_window::getTime() {
+        return glfwGetTime();
+    }
 }
 

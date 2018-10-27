@@ -11,6 +11,21 @@
 
 #define PTS_PER_VERTEX 6
 
+using std::cout;
+using std::endl;
+
+#define EXPORT __attribute__((visibility("default")))
+
+/*
+__attribute__((constructor))
+static void initializer(void) {
+	cout << "initializing " << __FILE__ << endl;
+}
+
+__attribute__((destructor))
+static void finalizer(void) {
+	cout << "finalizer " << __FILE__ << endl;
+}*/
 
 namespace shape {
 
@@ -147,8 +162,6 @@ namespace shape {
 	void renderable::change() const {
 		change_flag = true;
 	}
-
-
 
 
 	triangle::triangle(pt p1, pt p2, pt p3, color c): geom(GL_TRIANGLES, 3), c(c) {

@@ -15,11 +15,17 @@ namespace gl {
     context::context(glfw_window *w) {
         this->w = w;
     }
+	
+	context::~context() {
+		for (auto it = geomap.begin(); it != geomap.end(); it++)
+			delete it->second;
+	}
 
     void context::drawTri(float x1, float y1, float x2, float y2, float x3, float y3, util::color c) {
         triangle *t = new triangle(x1, y1, x2, y2, x3, y3, c);
-        renderable r = renderable(t);
+        renderable r = renderable(t, true);
         r.draw();
+		delete t;
     }
 	
 	void context::drawTri(shape::triangle *t) {
@@ -27,18 +33,32 @@ namespace gl {
 		r.draw();
 	}
 
-    renderable* context::genTri(float x1, float y1, float x2, float y2, float x3, float y3, util::color c) {
-        triangle *t = new triangle(x1, y1, x2, y2, x3, y3, c);
-        return new renderable(t, true);
-    }
-
-    renderable* context::genRenderObj(shape::geom *g) {
-        return new renderable(g, true);
+    void context::genRenderObj(shape::geom *g) {
+        geomap[g] = new renderable(g, true);
     }
     
-    renderable* context::genStaticRenderObj(shape::geom *g) {
-        return new renderable(g);
+    void context::genStaticRenderObj(shape::geom *g) {
+        geomap[g] = new renderable(g);
     }
+	
+	void context::deleteRenderObj(shape::geom *g) {
+		auto it = geomap.find(g);
+		if (it != geomap.end())
+			geomap.erase(it);
+	}
+	
+	
+	void context::draw(shape::geom *g, bool updated) {
+		auto it = geomap.find(g);
+		if (it == geomap.end()) {
+			cout << "shape not given rendering context object, must call genRenderObj or variant first" << endl;
+			return;
+		}
+		renderable *r = geomap[g];
+		if (updated)
+			r->change();
+		r->draw();
+	}
 
 
     // void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
@@ -136,6 +156,14 @@ namespace gl {
 	
 	void glfw_window::createCursorPosCallback(void(f)(GLFWwindow*, double, double)) {
 		glfwSetCursorPosCallback(_window, f);
+	}
+	
+	void glfw_window::createMouseButtonCallback(void(f)(GLFWwindow* w, int button, int action, int mods)) {
+		glfwSetMouseButtonCallback(_window, f);
+	}
+	
+	void glfw_window::getMousePos(double *x, double *y) {
+		glfwGetCursorPos(_window, x, y);
 	}
 	
 	bool glfw_window::createCustomCursor(unsigned char* data, int w, int h) {

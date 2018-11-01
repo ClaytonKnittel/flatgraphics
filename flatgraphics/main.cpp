@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <typeinfo>
 
 #include "gl.hpp"
 #include "shader.hpp"
@@ -34,7 +35,9 @@ int main(int argc, const char * argv[]) {
 	gl::context c = w.getContext();
 	
 	shape::triangle t({0, 0}, {.5f, 0}, {.6f, .4f}, util::cyan);
-	auto *d = c.genStaticRenderObj(&t);
+	c.genStaticRenderObj(&t);
+	
+	//grid g(0, 0, 1, 1, 1, 1, nullptr);
 	
 	double last = w.getTime();
 	int frames = 0;
@@ -42,7 +45,7 @@ int main(int argc, const char * argv[]) {
 		w.begin_draw();
 		s.use();
 		
-		d->draw();
+		c.draw(&t);
 		
 		frames++;
 		if (w.getTime() - last >= 1.0) {
@@ -53,7 +56,6 @@ int main(int argc, const char * argv[]) {
 		
 		w.end_draw();
 	}
-	delete d;
 	
 	return 0;
 }

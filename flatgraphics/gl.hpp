@@ -9,8 +9,6 @@
 #ifndef glfwinit_hpp
 #define glfwinit_hpp
 
-#include <map>
-
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -20,6 +18,7 @@
 // just so you don't have to include in other files
 #include "shader.hpp"
 
+#include <map>
 #include <iostream>
 #include <vector>
 
@@ -61,52 +60,6 @@ namespace shape {
 		geom(GLuint renderMode, unsigned int size);
 		virtual ~geom();
 	};
-    
-    class renderable {
-    public:
-        ~renderable();
-        
-        void setVisible(bool v);
-        void draw();
-		
-		friend class gl::context;
-		
-		// called if changes were made to vertex data
-		void change() const;
-        
-    protected:
-        bool visible, dynamic;
-        // call only once at initialization
-        void loadData(unsigned int size, float *data);
-		
-		// call once at initialization to enable
-		// element-indexed drawing
-		void loadElementBuffer(unsigned int size, int *data);
-        
-        // call for dynamic objects each frame
-        void loadSubData(float *data);
-    private:
-		renderable(geom *shape, bool dynamic=false, bool visible=true);
-		
-        geom *shape;
-		
-		// vertex array object
-		// vertex buffer object
-		// element buffer object (optional)
-        GLuint vao, vbo, ebo;
-		
-		// flagged if any changes are made to the geoms
-        mutable bool change_flag;
-		
-		// draw_opt: GL_STATIC_DRAW or GL_STREAM_DRAW
-		// render_mode: GL_TRIANGLES, GL_LINES, etc.
-        const GLuint draw_opt, render_mode;
-        
-        // number of points in this shape
-        unsigned int numVertices;
-		// number of elements in element buffer (optional)
-		unsigned int numElements;
-    };
     
     class triangle: public geom {
     public:
@@ -157,21 +110,77 @@ namespace shape {
     
 }
 
+namespace detail {
+	using namespace shape;
+	
+	class renderable {
+	public:
+		~renderable();
+		
+		void setVisible(bool v);
+		void draw();
+		
+		friend class gl::context;
+		
+		// called if changes were made to vertex data
+		void change() const;
+		
+	protected:
+		bool visible, dynamic;
+		// call only once at initialization
+		void loadData(unsigned int size, float *data);
+		
+		// call once at initialization to enable
+		// element-indexed drawing
+		void loadElementBuffer(unsigned int size, int *data);
+		
+		// call for dynamic objects each frame
+		void loadSubData(float *data);
+	private:
+		renderable(geom *shape, bool dynamic=false, bool visible=true);
+		
+		geom *shape;
+		
+		// vertex array object
+		// vertex buffer object
+		// element buffer object (optional)
+		GLuint vao, vbo, ebo;
+		
+		// flagged if any changes are made to the geoms
+		mutable bool change_flag;
+		
+		// draw_opt: GL_STATIC_DRAW or GL_STREAM_DRAW
+		// render_mode: GL_TRIANGLES, GL_LINES, etc.
+		const GLuint draw_opt, render_mode;
+		
+		// number of points in this shape
+		unsigned int numVertices;
+		// number of elements in element buffer (optional)
+		unsigned int numElements;
+	};
+}
 
-using namespace shape;
+
 
 namespace gl {
+	using namespace shape;
+	using namespace detail;
 
 	class context {
 	public:
+		~context();
 		void drawTri(float x1, float y1, float x2, float y2, float x3, float y3, color c);
 		void drawTri(shape::triangle *t);
 		
-		renderable* genTri(float x1, float y1, float x2, float y2, float x3, float y3, color c);
-		renderable* genRenderObj(shape::geom *g);
-		renderable* genStaticRenderObj(shape::geom *g);
+		void genRenderObj(shape::geom *g);
+		void genStaticRenderObj(shape::geom *g);
+		void deleteRenderObj(shape::geom *g);
+		
+		void draw(shape::geom *g, bool updated=false);
+		
 	private:
 		glfw_window *w;
+		map<shape::geom*, renderable*> geomap;
 		
 		context(glfw_window *w);
 		friend class glfw_window;
@@ -196,7 +205,19 @@ namespace gl {
 		
 		double getTime();
 		
-		void createCursorPosCallback(void(GLFWwindow*, double, double));
+		/**
+		 x: x position of cursor
+		 y: y position of cursor
+		 */
+		void createCursorPosCallback(void(GLFWwindow* w, double x, double y));
+		/**
+		 button: GLFW_MOUSE_BUTTON_LEFT, GLFW_MOUSE_BUTTON_RIGHT, etc.
+		 action: GLFW_PRESS or GLFW_RELEASE
+		 mods:
+		 */
+		void createMouseButtonCallback(void(GLFWwindow* w, int button, int action, int mods));
+		
+		void getMousePos(double *x, double *y);
 		
 		bool createCustomCursor(unsigned char* data, int w=16, int h=16);
 		void defaultCursor();

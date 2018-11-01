@@ -4,10 +4,38 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>flatgraphics.xcscheme</key>
+		<key>flat.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+		<key>flatgraphics.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>CE4179A2217BF32100D386D6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CE48CEC82183F3BB00ECFD17</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CE48CEE221843E1D00ECFD17</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CE48CEEA21843E1D00ECFD17</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

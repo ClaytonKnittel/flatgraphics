@@ -56,26 +56,6 @@ namespace util {
 
 std::ostream &operator<<(std::ostream &o, util::color c);
 
-namespace geom {
-    struct rect {
-        float x, y, w, h;
-    };
-    struct circle {
-        float x, y, r;
-    };
-    struct triangle {
-		float x1, y1, x2, y2, x3, y3;
-    };
-}
-
-
-std::ostream &operator<<(std::ostream &o, geom::rect r);
-
-std::ostream &operator<<(std::ostream &o, geom::circle c);
-
-std::ostream &operator<<(std::ostream &o, geom::triangle t);
-
-
 
 namespace input {
 	

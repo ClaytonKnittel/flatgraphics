@@ -67,103 +67,6 @@ namespace shape {
 	}
 
 
-	void deref_buffers() {
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-
-	void setup_vao() {
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, PTS_PER_VERTEX * sizeof(GLfloat), (GLvoid *) 0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, PTS_PER_VERTEX * sizeof(GLfloat), (GLvoid *) (2 * sizeof(GLfloat)));
-	}
-
-	renderable::renderable(geom* shape, bool dynamic, bool visible): dynamic(dynamic), draw_opt(dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW), render_mode(shape->renderMode) {
-		this->shape = shape;
-		this->visible = visible;
-		change_flag = false;
-		
-		// initialize to 0 by default, as these
-		// are optional
-		this->ebo = 0;
-		this->numElements = 0;
-		
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-		
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		setup_vao();
-		
-		float *temp = this->shape->genData();
-		loadData(this->shape->size, temp);
-		delete [] temp;
-		
-		deref_buffers();
-	}
-
-	renderable::~renderable() {
-		if (ebo != 0)
-			glDeleteBuffers(1, &ebo);
-		glDeleteBuffers(1, &vbo);
-		glDeleteVertexArrays(1, &vao);
-	}
-
-	void renderable::setVisible(bool v) {
-		visible = v;
-	}
-
-	void renderable::draw() {
-		if (!visible)
-			return;
-		if (change_flag) {
-			float* temp = shape->genData();
-			loadSubData(temp);
-			delete [] temp;
-			
-			change_flag = false;
-		}
-		
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		if (numElements != 0) {
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-			glDrawElements(render_mode, numElements, GL_UNSIGNED_INT, NULL);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		}
-		else
-			glDrawArrays(render_mode, shape->offset, numVertices);
-		
-		deref_buffers();
-	}
-
-	// protected members
-	void renderable::loadData(unsigned int size, float *data) {
-		this->numVertices = size;
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, PTS_PER_VERTEX * size * sizeof(float), data, draw_opt);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-	
-	void renderable::loadElementBuffer(unsigned int size, int *data) {
-		this->numElements = size;
-		glGenBuffers(1, &ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(int), data, GL_STATIC_DRAW);
-	}
-
-	void renderable::loadSubData(float *data) {
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, PTS_PER_VERTEX * numVertices * sizeof(float), data);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-
-	void renderable::change() const {
-		change_flag = true;
-	}
-
-
 	triangle::triangle(pt p1, pt p2, pt p3, color c): geom(GL_TRIANGLES, 3), c(c) {
 		pts = new pt[3] {p1, p2, p3};
 	}
@@ -279,4 +182,105 @@ namespace shape {
 	}
 	
 }
+
+
+namespace detail {
+	
+	void deref_buffers() {
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	
+	void setup_vao() {
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, PTS_PER_VERTEX * sizeof(GLfloat), (GLvoid *) 0);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, PTS_PER_VERTEX * sizeof(GLfloat), (GLvoid *) (2 * sizeof(GLfloat)));
+	}
+	
+	renderable::renderable(geom* shape, bool dynamic, bool visible): dynamic(dynamic), draw_opt(dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW), render_mode(shape->renderMode) {
+		this->shape = shape;
+		this->visible = visible;
+		change_flag = false;
+		
+		// initialize to 0 by default, as these
+		// are optional
+		this->ebo = 0;
+		this->numElements = 0;
+		
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+		
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		setup_vao();
+		
+		float *temp = this->shape->genData();
+		loadData(this->shape->size, temp);
+		delete [] temp;
+		
+		deref_buffers();
+	}
+	
+	renderable::~renderable() {
+		if (ebo != 0)
+			glDeleteBuffers(1, &ebo);
+		glDeleteBuffers(1, &vbo);
+		glDeleteVertexArrays(1, &vao);
+	}
+	
+	void renderable::setVisible(bool v) {
+		visible = v;
+	}
+	
+	void renderable::draw() {
+		if (!visible)
+			return;
+		if (change_flag) {
+			float* temp = shape->genData();
+			loadSubData(temp);
+			delete [] temp;
+			
+			change_flag = false;
+		}
+		
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		if (numElements != 0) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+			glDrawElements(render_mode, numElements, GL_UNSIGNED_INT, NULL);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		}
+		else
+			glDrawArrays(render_mode, shape->offset, numVertices);
+		
+		deref_buffers();
+	}
+	
+	// protected members
+	void renderable::loadData(unsigned int size, float *data) {
+		this->numVertices = size;
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, PTS_PER_VERTEX * size * sizeof(float), data, draw_opt);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	
+	void renderable::loadElementBuffer(unsigned int size, int *data) {
+		this->numElements = size;
+		glGenBuffers(1, &ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(int), data, GL_STATIC_DRAW);
+	}
+	
+	void renderable::loadSubData(float *data) {
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, PTS_PER_VERTEX * numVertices * sizeof(float), data);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	
+	void renderable::change() const {
+		change_flag = true;
+	}
+}
+
 

@@ -98,6 +98,7 @@
 				CE4179AD217BF35900D386D6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		CE4179A4217BF32100D386D6 /* Products */ = {
 			isa = PBXGroup;
@@ -161,8 +162,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE48CED32183F8D000ECFD17 /* flat.h in Headers */,
 				CE48CED42183F8D000ECFD17 /* gl.hpp in Headers */,
+				CE48CED32183F8D000ECFD17 /* flat.h in Headers */,
 				CE48CED52183F8D800ECFD17 /* shader.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

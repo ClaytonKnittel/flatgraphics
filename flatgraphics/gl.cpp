@@ -43,8 +43,10 @@ namespace gl {
 	
 	void context::deleteRenderObj(shape::geom *g) {
 		auto it = geomap.find(g);
-		if (it != geomap.end())
+		if (it != geomap.end()) {
+			delete it->second;
 			geomap.erase(it);
+		}
 	}
 	
 	

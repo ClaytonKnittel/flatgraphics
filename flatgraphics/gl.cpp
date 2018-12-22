@@ -21,7 +21,7 @@ namespace gl {
 			delete it->second;
 	}
 
-    void context::drawTri(float x1, float y1, float x2, float y2, float x3, float y3, util::color c) {
+    void context::drawTri(float x1, float y1, float x2, float y2, float x3, float y3, util::color *c) {
         triangle *t = new triangle(x1, y1, x2, y2, x3, y3, c);
         renderable r = renderable(t, true);
         r.draw();
@@ -50,22 +50,20 @@ namespace gl {
 	}
 	
 	
-	void context::draw(shape::geom *g, bool updated) {
+	void context::draw(shape::geom *g) {
 		auto it = geomap.find(g);
 		if (it == geomap.end()) {
 			cout << "shape not given rendering context object, must call genRenderObj or variant first" << endl;
 			return;
 		}
-		renderable *r = geomap[g];
-		if (updated)
-			r->change();
+		renderable *r = it->second;
 		r->draw();
 	}
 
 
     // void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
-    glfw_window::glfw_window(int width, int height, int v_maj, int v_min) {
+    glfw_window::glfw_window(string title, int width, int height, int v_maj, int v_min) {
         glfwInit();
         
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, v_maj);
@@ -74,7 +72,7 @@ namespace gl {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
         
-        this->_window = glfwCreateWindow(width, height, "flat", NULL, NULL);
+        this->_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
         
         if (_window == nullptr) {
             std::cout << "Failed to create GLFW window" << std::endl;
@@ -121,16 +119,8 @@ namespace gl {
         return _window;
     }
 
-    void glfw_window::setBGColor(util::color c) {
+    void glfw_window::setBGColor(const util::color *c) {
         this->bg_color = c;
-    }
-
-    int glfw_window::setBGColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-        bg_color.r = r;
-        bg_color.g = g;
-        bg_color.b = b;
-        bg_color.a = a;
-        return 0;
     }
 
     context glfw_window::getContext() {
@@ -144,7 +134,7 @@ namespace gl {
 
     void glfw_window::begin_draw() {
         glfwPollEvents();
-        glClearColor(bg_color.r / 255.f, bg_color.g / 255.f, bg_color.b / 255.f, bg_color.a / 255.f);
+        glClearColor(bg_color->rf(), bg_color->gf(), bg_color->bf(), bg_color->af());
         glClear(GL_COLOR_BUFFER_BIT);
     }
 

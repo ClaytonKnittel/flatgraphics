@@ -45,17 +45,17 @@ namespace shape {
 		y -= p.y;
 	}
 	
-	void fill(float *f, float x, float y, color c) {
+	void fillData(float *f, float x, float y, const color *c) {
 		f[0] = x;
 		f[1] = y;
-		f[2] = c.rf();
-		f[3] = c.gf();
-		f[4] = c.bf();
-		f[5] = c.af();
+		f[2] = c->rf();
+		f[3] = c->gf();
+		f[4] = c->bf();
+		f[5] = c->af();
 	}
 	
 	
-	geom::geom(GLuint renderMode, unsigned int size): renderMode(renderMode), size(size), offset(0) {}
+	geom::geom(GLuint renderMode, unsigned int size): renderMode(renderMode), size(size) {}
 	
 	geom::~geom() {
 	}
@@ -67,15 +67,15 @@ namespace shape {
 	}
 
 
-	triangle::triangle(pt p1, pt p2, pt p3, color c): geom(GL_TRIANGLES, 3), c(c) {
+	triangle::triangle(pt p1, pt p2, pt p3, const color *c): geom(GL_TRIANGLES, 3), c(c) {
 		pts = new pt[3] {p1, p2, p3};
 	}
 
-	triangle::triangle(float x1, float y1, float x2, float y2, float x3, float y3, util::color c): triangle({x1, y1}, {x2, y2}, {x3, y3}, c) {}
+	triangle::triangle(float x1, float y1, float x2, float y2, float x3, float y3, const util::color *c): triangle({x1, y1}, {x2, y2}, {x3, y3}, c) {}
 	
-	triangle::triangle(triangle &t): geom(t.renderMode, t.size) {
-		// TODO
-	}
+//	triangle::triangle(triangle &t): geom(t.renderMode, t.size) {
+//		// TODO
+//	}
 
 	triangle::~triangle() {
 		delete [] pts;
@@ -101,9 +101,9 @@ namespace shape {
 	}
 
 	void triangle::genData(float *f) {
-		fill(f, pts[0].x, pts[0].y, c);
-		fill(f + 6, pts[1].x, pts[1].y, c);
-		fill(f + 12, pts[2].x, pts[2].y, c);
+		fillData(f, pts[0].x, pts[0].y, c);
+		fillData(f + PTS_PER_VERTEX, pts[1].x, pts[1].y, c);
+		fillData(f + 2 * PTS_PER_VERTEX, pts[2].x, pts[2].y, c);
 	}
 	
 	std::ostream &operator<<(std::ostream &o, triangle &t) {
@@ -111,54 +111,58 @@ namespace shape {
 	}
 	
 	
-	int totalSize(int size, geom **geoms) {
+	conglomerate::conglomerate(int size, geom **geoms): geom(geoms[0]->renderMode, 0), geoms_len(size) {
+		this->geoms = new pair<geom*, int>[size];
 		int tot = 0;
 		for (int i = 0; i < size; i++) {
-			// updates their offsets while totaling
-			geoms[i]->offset = tot;
-			tot += geoms[i]->size;
+			this->geoms[i].first = geoms[i];
+			this->geoms[i].second = tot;
+			tot += this->geoms[i].first->size;
 		}
-		return tot;
+		this->size = tot;
 	}
 	
-	conglomerate::conglomerate(int size, geom **&geoms): geom(geoms[0]->renderMode, totalSize(size, geoms)), geoms_len(size) {
-		this->geoms = geoms;
-		// don't use old geoms after making this
-		geoms = NULL;
-	}
-	
-	conglomerate::conglomerate(vector<geom*> &geoms): geom(geoms[0]->renderMode, totalSize(int(geoms.size()), &(geoms[0]))), geoms_len(int(geoms.size())) {
-		this->geoms = new geom*[geoms_len];
-		for (int i = 0; i < geoms_len; i++)
-			this->geoms[i] = geoms[i];
+	conglomerate::conglomerate(vector<geom*> &geoms): geom(geoms[0]->renderMode, 0), geoms_len(int(geoms.size())) {
+		this->geoms = new pair<geom*, int>[geoms_len];
+		int tot = 0;
+		for (int i = 0; i < geoms_len; i++) {
+			this->geoms[i].first = geoms[i];
+			this->geoms[i].second = tot;
+			tot += this->geoms[i].first->size;
+		}
+		this->size = tot;
 	}
 	
 	conglomerate::~conglomerate() {
 		for (int i = 0; i < geoms_len; i++)
-			delete geoms[i];
+			delete geoms[i].first;
 		delete [] geoms;
 	}
 	
 	void conglomerate::genData(float *f) {
 		for (int i = 0; i < geoms_len; i++) {
-			geom *&g = geoms[i];
-			g->genData(f + PTS_PER_VERTEX * g->offset);
+			pair<geom *, int> g = geoms[i];
+			g.first->genData(f + PTS_PER_VERTEX * g.second);
 		}
 	}
 	
 	
 	
-	grid::grid(float x, float y, float width, float height, int rows, int cols, colorFunc colorFunction): geom(GL_TRIANGLES, 6 * rows * cols) {
+	grid::grid(float x, float y, float width, float height, int rows, int cols): geom(GL_TRIANGLES, PTS_PER_VERTEX * rows * cols) {
 		this->x = x;
 		this->y = y;
 		this->width = width;
 		this->height = height;
 		this->rows = rows;
 		this->cols = cols;
-		this->colorFunction = colorFunction;
+		this->colors = new const color*[rows * cols];
+		for (int i = 0; i < rows * cols; i++)
+			colors[i] = &util::black;
 	}
 	
-	grid::~grid() {}
+	grid::~grid() {
+		delete [] colors;
+	}
 	
 	void grid::genData(float *f) {
 		float dx = width / rows;
@@ -170,16 +174,98 @@ namespace shape {
 			for (int i = 0; i < rows; i++) {
 				float xp = xs + i * dx;
 				int ind = 36 * (i + rows * j);
-				color c = colorFunction(i, j);
-				fill(f + ind, xp, yp, c);
-				fill(f + ind + 6, xp, yp + dy, c);
-				fill(f + ind + 12, xp + dx, yp, c);
-				fill(f + ind + 18, xp + dx, yp, c);
-				fill(f + ind + 24, xp, yp + dy, c);
-				fill(f + ind + 30, xp + dx, yp + dy, c);
+				const color *c = colors[i + rows * j];
+				fillData(f + ind, xp, yp, c);
+				fillData(f + ind + 6, xp, yp + dy, c);
+				fillData(f + ind + 12, xp + dx, yp, c);
+				fillData(f + ind + 18, xp + dx, yp, c);
+				fillData(f + ind + 24, xp, yp + dy, c);
+				fillData(f + ind + 30, xp + dx, yp + dy, c);
 			}
 		}
 	}
+	
+	void grid::fill(const color &c) {
+		for (int i = 0; i < rows * cols; i++)
+			colors[i] = &c;
+	}
+	
+	void grid::set(int i, int j, const color *c) {
+		colors[i + rows * j] = c;
+	}
+	
+	void grid::setBorder(const color *c) {
+		int a = rows * (cols - 1);
+		for (int i = 0; i < rows; i++) {
+			colors[i] = c;
+			colors[i + a] = c;
+		}
+		for (int j = 0; j < cols; j++) {
+			colors[j * rows] = c;
+			colors[(j + 1) * rows - 1] = c;
+		}
+	}
+	
+	
+	image::image(int width, int height, float screenWidth, float screenHeight, float centerX, float centerY): geom(GL_POINTS, PTS_PER_VERTEX * width * height), width(width), height(height), sw(screenWidth), sh(screenHeight), cx(centerX), cy(centerY) {
+		this->colors = new const color*[width * height];
+	}
+	
+	image::~image() {
+		delete [] this->colors;
+	}
+	
+	void image::genData(float *f) {
+		int len = width * height;
+		for (int i = 0; i < len; i++) {
+			float x = (i % width) * sw / width - cx;
+			float y = (i / width) * sh / height - cy;
+			fillData(f + i * PTS_PER_VERTEX, x, y, colors[i]);
+		}
+	}
+	
+	void image::fill(const color &c) {
+		int len = width * height;
+		for (int i = 0; i < len; i++)
+			colors[i] = &c;
+	}
+	
+	void image::set(int i, int j, const color &c) {
+		colors[i + j * width] = &c;
+	}
+	
+	
+	
+	dynamicDrawer::dynamicDrawer(unsigned int capacity): geom(GL_TRIANGLES, capacity), pointCapacity(capacity * PTS_PER_VERTEX) {
+		data = new float[pointCapacity];
+		memset(data, 0, pointCapacity);
+		off = 0;
+	}
+	
+	dynamicDrawer::~dynamicDrawer() {
+		delete [] data;
+	}
+	
+	void dynamicDrawer::draw(geom *obj) {
+		int size = obj->size * PTS_PER_VERTEX;
+		if (off + size > pointCapacity) {
+			cout << "Exceeded capacity of dynamicDrawer" << endl;
+			return;
+		}
+		obj->genData(data + off);
+		off += size;
+	}
+	
+	void dynamicDrawer::reset() {
+		memset(data, 0, pointCapacity);
+		off = 0;
+	}
+	
+	void dynamicDrawer::genData(float *f) {
+		memcpy(f, data, pointCapacity * sizeof(float));
+	}
+	
+	
 	
 }
 
@@ -201,7 +287,6 @@ namespace detail {
 	renderable::renderable(geom* shape, bool dynamic, bool visible): dynamic(dynamic), draw_opt(dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW), render_mode(shape->renderMode) {
 		this->shape = shape;
 		this->visible = visible;
-		change_flag = false;
 		
 		// initialize to 0 by default, as these
 		// are optional
@@ -233,15 +318,13 @@ namespace detail {
 		visible = v;
 	}
 	
-	void renderable::draw() {
+	void renderable::draw(int offset) {
 		if (!visible)
 			return;
-		if (change_flag) {
+		if (dynamic) {
 			float* temp = shape->genData();
 			loadSubData(temp);
 			delete [] temp;
-			
-			change_flag = false;
 		}
 		
 		glBindVertexArray(vao);
@@ -252,7 +335,7 @@ namespace detail {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 		else
-			glDrawArrays(render_mode, shape->offset, numVertices);
+			glDrawArrays(render_mode, 0, numVertices);
 		
 		deref_buffers();
 	}
@@ -278,9 +361,9 @@ namespace detail {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 	
-	void renderable::change() const {
-		change_flag = true;
-	}
+//	void renderable::change() const {
+//		change_flag = true;
+//	}
 }
 
 

@@ -20,12 +20,13 @@ using std::endl;
 namespace util {
 	
 	struct color {
+		color() = delete;
 		uint8_t r, g, b, a;
 		color &operator=(color &c);
-		float rf();
-		float gf();
-		float bf();
-		float af();
+		float rf() const;
+		float gf() const;
+		float bf() const;
+		float af() const;
 	};
 	
 	const color black = {0, 0, 0, 0xff};
@@ -54,7 +55,7 @@ namespace util {
 	const color bar_unfocused_color = {0xf6, 0xf6, 0xf6, 0xff};
 }
 
-std::ostream &operator<<(std::ostream &o, util::color c);
+std::ostream &operator<<(std::ostream &o, util::color *c);
 
 
 namespace input {

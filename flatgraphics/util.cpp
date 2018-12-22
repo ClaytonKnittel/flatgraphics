@@ -11,19 +11,19 @@
 
 using util::color;
 
-float color::rf() {
+float color::rf() const {
     return r / 255.f;
 }
 
-float color::gf() {
+float color::gf() const {
     return g / 255.f;
 }
 
-float color::bf() {
+float color::bf() const {
     return b / 255.f;
 }
 
-float color::af() {
+float color::af() const {
     return a / 255.f;
 }
 
@@ -35,6 +35,6 @@ color &color::operator=(util::color &c) {
     return *this;
 }
 
-std::ostream &operator<<(std::ostream &o, util::color c) {
-    return o << "rgb(" << int(c.r) << ", " << int(c.g) << ", " << int(c.b) << ", " << int(c.a) << ")";
+std::ostream &operator<<(std::ostream &o, util::color *c) {
+    return o << "rgb(" << int(c->r) << ", " << int(c->g) << ", " << int(c->b) << ", " << int(c->a) << ")";
 }

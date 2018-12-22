@@ -21,9 +21,11 @@
 #include <map>
 #include <iostream>
 #include <vector>
+#include <utility>
 
 using std::vector;
 using std::map;
+using std::pair;
 
 using namespace util;
 
@@ -47,10 +49,10 @@ namespace shape {
 	struct geom {
 		// offset in the vertex buffer at which
 		// this geom stores its data
-		unsigned int offset;
+		//unsigned int offset;
 		
 		// how many vertices there are
-		const unsigned int size;
+		unsigned int size;
 		
 		// GL_TRIANGLES, GL_LINES, etc.
 		const GLuint renderMode;
@@ -63,9 +65,9 @@ namespace shape {
     
     class triangle: public geom {
     public:
-        triangle(pt p1, pt p2, pt p3, color c);
-        triangle(float x1, float y1, float x2, float y2, float x3, float y3, color c);
-        triangle(triangle &t);
+        triangle(pt p1, pt p2, pt p3, const color *c);
+        triangle(float x1, float y1, float x2, float y2, float x3, float y3, const color *c);
+//        triangle(triangle &t);
         virtual ~triangle();
         
         void operator+=(pt p);
@@ -78,34 +80,73 @@ namespace shape {
         
     private:
         pt *pts;
-        color c;
+        const color *c;
     };
     
     class conglomerate: public geom {
     public:
-		conglomerate(int size, geom **&geoms);
+		conglomerate(int size, geom **geoms);
 		conglomerate(vector<geom*> &geoms);
 		virtual ~conglomerate();
 		
 		virtual void genData(float *f);
     private:
-        geom **geoms;
+        pair<geom*, int> *geoms;
 		const int geoms_len;
     };
 	
 	
 	class grid: public geom {
 	public:
-		grid(float x, float y, float width, float height, int rows, int cols, colorFunc colorFunction);
+		grid(float x, float y, float width, float height, int rows, int cols);
 		virtual ~grid();
 		
 		virtual void genData(float *f);
+		
+		void fill(const color &c);
+		void set(int i, int j, const color *c);
+		void setBorder(const color *c);
+		
 	private:
 		// talking about center of grid
 		float x, y;
 		float width, height;
 		int rows, cols;
-		colorFunc colorFunction;
+		color const ** colors;
+	};
+	
+	
+	class image: public geom {
+	public:
+		image(int width, int height, float screenWidth=2, float screenHeight=2, float centerX=0, float centerY=0);
+		virtual ~image();
+		
+		virtual void genData(float *f);
+		
+		void fill(const color &c);
+		void set(int i, int j, const color &c);
+		
+	private:
+		int width, height;
+		float cx, cy, sw, sh;
+		color const ** colors;
+	};
+	
+	
+	class dynamicDrawer: public geom {
+	public:
+		dynamicDrawer(unsigned int capacity);
+		virtual ~dynamicDrawer();
+		
+		void draw(geom *obj);
+		void reset();
+		
+		virtual void genData(float *f);
+		
+	private:
+		unsigned int pointCapacity;
+		float* data;
+		int off;
 	};
     
 }
@@ -118,12 +159,12 @@ namespace detail {
 		~renderable();
 		
 		void setVisible(bool v);
-		void draw();
+		void draw(int offset=0);
 		
 		friend class gl::context;
 		
 		// called if changes were made to vertex data
-		void change() const;
+//		void change() const;
 		
 	protected:
 		bool visible, dynamic;
@@ -147,7 +188,7 @@ namespace detail {
 		GLuint vao, vbo, ebo;
 		
 		// flagged if any changes are made to the geoms
-		mutable bool change_flag;
+//		mutable bool change_flag;
 		
 		// draw_opt: GL_STATIC_DRAW or GL_STREAM_DRAW
 		// render_mode: GL_TRIANGLES, GL_LINES, etc.
@@ -169,14 +210,14 @@ namespace gl {
 	class context {
 	public:
 		~context();
-		void drawTri(float x1, float y1, float x2, float y2, float x3, float y3, color c);
+		void drawTri(float x1, float y1, float x2, float y2, float x3, float y3, color *c);
 		void drawTri(shape::triangle *t);
 		
 		void genRenderObj(shape::geom *g);
 		void genStaticRenderObj(shape::geom *g);
 		void deleteRenderObj(shape::geom *g);
 		
-		void draw(shape::geom *g, bool updated=false);
+		void draw(shape::geom *g);
 		
 	private:
 		glfw_window *w;
@@ -188,13 +229,13 @@ namespace gl {
 
 	class glfw_window {
 	public:
-		glfw_window(int width, int height, int v_maj=3, int v_min=3);
+		glfw_window(std::string name, int width, int height, int v_maj=3, int v_min=3);
 		~glfw_window();
 		void addKeyPress(int glfwKey, const std::function<void()> &action);
 		int window_width();
 		int window_height();
 		GLFWwindow * glfwWindow();
-		void setBGColor(util::color c);
+		void setBGColor(const util::color *c);
 		int setBGColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		
 		context getContext();
@@ -226,7 +267,7 @@ namespace gl {
 		GLFWwindow *_window;
 		std::map<int, std::function<void()>> keymap;
 		int width, height;
-		util::color bg_color;
+		const util::color *bg_color;
 	};
 	
 }
